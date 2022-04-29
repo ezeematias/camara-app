@@ -13,32 +13,51 @@ const HomeScreen = () => {
     async function handlerSingOut() {
         await auth
             .signOut()
-            .then(() => {navigation.replace('Index')})
+            .then(() => { navigation.replace('Index') })
             .catch((error: any) => alert(error.message))
-    }    
+    }
 
-  return (
-    <View style={styles.container}>         
-        
-        <Text style={styles.textHome}>¡Bienvenido!</Text>
-        <Text style={styles.textDescription}>Estamos trabajando en un mejor diseño. Muchas gracias por iniciar sesión.</Text>
-     
-        <View style={styles.buttonContainer} >   
-                <TouchableOpacity 
+    return (
+        <View style={styles.containerHome}>
+            <View style={styles.buttonContainerHome} >
+                <TouchableOpacity
                     onPress={handlerSingOut}
-                    style={styles.button}
+                    style={styles.buttonHome}
                 >
-                <Text style={styles.buttonText}>Cerrar Sesión</Text>
+                    <Image
+                        source={require('../assets/lente.png')}
+                        resizeMode="contain"
+                        style={styles.logoHome}
+                    />
+                    <Text style={styles.buttonText}>Cosas Lindas</Text>
                 </TouchableOpacity>
-            </View>                       
-            <Image 
-                source={require('../assets/lente.png')}
-                resizeMode="contain"                 
-                style={styles.logoHome} 
-            />    
-        
-    </View>
-  );
+                <TouchableOpacity
+                    onPress={handlerSingOut}
+                    style={[styles.buttonHome, styles.buttonOutlineRole]}
+                >
+                    <Image
+                        source={require('../assets/lenteRojo.png')}
+                        resizeMode="contain"
+                        style={styles.logoHome}
+                    />
+                    <View>
+                        <Text style={styles.buttonOutlineTextRole}>
+                            Cosas Feas
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={handlerSingOut}
+                    style={[styles.button, styles.buttonOutline]}>
+                    <View>
+                        <Text style={styles.buttonOutlineText}>
+
+                            Cerrar Sesión</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 }
 
 export default HomeScreen;

@@ -13,6 +13,15 @@ export default StyleSheet.create({
         backgroundColor: primaryColor,
         alignItems: 'center',
         justifyContent: 'center',
+    },    
+    containerHome: {
+        flex:1,
+        flexDirection: 'column',
+        backgroundColor: primaryColor,
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        width: '100%',
     },
     logo: {
         width: '100%',
@@ -20,8 +29,8 @@ export default StyleSheet.create({
     },
     logoHome: {
         width: '100%',
-        height: '20%',
-        marginTop: '10%',
+        height: '70%',        
+        margin: '3%',        
     },
     inputContainer: {
         width: '80%',
@@ -42,12 +51,28 @@ export default StyleSheet.create({
         alignItems: 'center',
         marginTop: '5%',
     },
+    buttonContainerHome: {
+        width: '99%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     button: {
         backgroundColor: fourthColor,
         width: '100%',
         padding: 10,
         borderRadius: buttonBorderRadius,
         alignItems: 'center',
+        justifyContent: 'center',   
+        marginTop: '5%',     
+    },
+    buttonHome: {
+        backgroundColor: fourthColor,
+        width: '100%',
+        height: '45%',
+        padding: 5,
+        borderRadius: buttonBorderRadius,
+        alignItems: 'center',
+        justifyContent: 'center',        
     },
     buttonRole: {
         backgroundColor: secondaryColor,
@@ -55,6 +80,7 @@ export default StyleSheet.create({
         padding: 5,
         borderRadius: buttonBorderRadius,
         alignItems: 'center',
+        marginTop: '5%',
     },
     buttonError: {
         backgroundColor: secondaryColor,
@@ -117,7 +143,6 @@ export default StyleSheet.create({
         fontWeight: 'bold',  
         textAlign: 'center',
         margin: 5,
-    },   
-
+    }, 
     
 })
