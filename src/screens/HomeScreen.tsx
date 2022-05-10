@@ -17,11 +17,17 @@ const HomeScreen = () => {
             .catch((error: any) => alert(error.message))
     }
 
+    const handlerCamera = () => {
+        navigation.replace('Camera');
+    }
+
+    
+
     return (
         <View style={styles.containerHome}>
             <View style={styles.buttonContainerHome} >
                 <TouchableOpacity
-                    onPress={handlerSingOut}
+                    onPress={handlerCamera}
                     style={styles.buttonHome}
                 >
                     <Image
@@ -32,8 +38,9 @@ const HomeScreen = () => {
                     <Text style={styles.buttonText}>Cosas Lindas</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={handlerSingOut}
+                    onPress={handlerCamera}
                     style={[styles.buttonHome, styles.buttonOutlineRole]}
+                    
                 >
                     <Image
                         source={require('../assets/lenteRojo.png')}

@@ -4,16 +4,17 @@ import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import IndexScreen from './src/screens/IndexScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
+import CameraScreen from './src/screens/CameraScreen';
 import AnimatedLottieView from 'lottie-react-native';
 import { StyleSheet } from 'react-native';
 import { DarkTheme, NavigationContainer } from '@react-navigation/native';
-
 
 export type RootStackParamList = {
   Home: any;
   Login: any;
   Index: any;
   SignUp: any;
+  Camera: any;
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -44,6 +45,8 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
         <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignUpScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
