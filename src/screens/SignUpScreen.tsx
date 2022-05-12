@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { auth } from "../database/firebase";
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { RootStackParamList } from "../../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Spinner from "react-native-loading-spinner-overlay/lib";
@@ -15,9 +15,9 @@ const SignScreen = () => {
     const [displayName, setDisplayName] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    
+
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-    
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -58,6 +58,8 @@ const SignScreen = () => {
         } else {
             setMessageError("Las contraseñas no coinciden");
         }
+        await updateProfile(auth.currentUser!, { displayName: displayName }).catch(
+            (err) => console.log(err));
     }
 
     const handlerBack = () => {
@@ -68,17 +70,17 @@ const SignScreen = () => {
         setMessage(message);
         setTimeout(() => {
             setMessage("");
-        }, 3000); 
+        }, 3000);
     }
 
     return (
         <View style={styles.container}>
             {loading && <View style={styles.spinContainer}>
-                    <Spinner
-                        visible={loading}  
-                        textStyle={styles.spinnerTextStyle}
-                    />
-                </View>}
+                <Spinner
+                    visible={loading}
+                    textStyle={styles.spinnerTextStyle}
+                />
+            </View>}
             <Image
                 source={require('../assets/lente.png')}
                 resizeMode="contain"

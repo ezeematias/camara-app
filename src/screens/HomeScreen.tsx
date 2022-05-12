@@ -19,9 +19,7 @@ const HomeScreen = () => {
 
     const handlerCamera = () => {
         navigation.replace('Camera');
-    }
-
-    
+    }    
 
     return (
         <View style={styles.containerHome}>

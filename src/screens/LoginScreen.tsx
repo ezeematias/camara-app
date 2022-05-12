@@ -1,9 +1,9 @@
 import { useNavigation } from "@react-navigation/core";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { auth } from "../database/firebase";
 import  styles from "../styles/Style";
-import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { RootStackParamList } from "../../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Spinner from "react-native-loading-spinner-overlay/lib";
@@ -16,19 +16,11 @@ const LoginScreen = () => {
 
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                navigation.replace('Home');
-            }
-        })
-        return unsubscribe;
-    }, []);
-
     const handlerLogin = async () => {
         setLoading(true);
         await signInWithEmailAndPassword(auth, email, password)
             .then((userCredential: { user: any; }) => {
+                navigation.replace('Home');
                 const user = userCredential.user;
                 console.log("Logged in with", user.email);
             })
