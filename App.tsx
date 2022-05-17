@@ -1,67 +1,53 @@
-import React, { useEffect } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './src/screens/LoginScreen';
-import HomeScreen from './src/screens/HomeScreen';
-import IndexScreen from './src/screens/IndexScreen';
-import SignUpScreen from './src/screens/SignUpScreen';
-import CameraScreen from './src/screens/CameraScreen';
+import React, { useEffect, useState } from 'react';
+import 'react-native-gesture-handler';
+import { useFonts } from 'expo-font';
+import InitApp from './src/InitApp';
+import { Provider } from 'react-redux';
+import generateStore from './src/redux/store';
+import { Provider as PaperProvider } from 'react-native-paper';
 import AnimatedLottieView from 'lottie-react-native';
-import { StyleSheet } from 'react-native';
-import { DarkTheme, NavigationContainer } from '@react-navigation/native';
-
-export type RootStackParamList = {
-  Home: any;
-  Login: any;
-  Index: any;
-  SignUp: any;
-  Camera: any;
-}
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import FlashMessage from 'react-native-flash-message';
+import { Image, Text, View } from 'react-native';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 export default function App() {
-
-  const [lottieLoad, setLottieLoad] = React.useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLottieLoad(true)
-    }, 4000);
-  }, [])
-
-  if (!lottieLoad) {
+  const store = generateStore();
+  const [lottieLoad, setLottieLoad] = useState(false);
+  const [fontsLoaded] = useFonts({
+    Knewave: require('./assets/fonts/Knewave-Regular.ttf'),
+    IrishGrover: require('./assets/fonts/IrishGrover-Regular.ttf')
+    });
+    
+    useEffect(()=>{
+      setTimeout(() => {
+        setLottieLoad(true)
+      }, 6000);
+    },[])
+    if(!fontsLoaded) return <Image style={{height:'100%', width:'100%'}} source={require('./assets/splash.png')} />;
+    
+  if(!lottieLoad){
     return (
-      <AnimatedLottieView duration={4000}
-        autoPlay
-        style={styles.splash}
-        source={require('./assets/animation.json')}
-      />)
+      <View style={{position: 'absolute', flex:1, paddingVertical:79,
+      height: '100%', backgroundColor:"#1345cb",
+      width: '100%',
+      justifyContent: 'space-around', alignItems:'center'}}>
+        <Text style={{fontSize:72, fontFamily:'IrishGrover', color:'white'}}>Alan Pucci</Text>
+        <AnimatedLottieView duration={7000} style={{width:460}}
+          autoPlay
+          source={require('./assets/splash.json')}
+        />
+        <Text style={{fontSize:72, fontFamily:'IrishGrover',color:'white'}}>4ºB</Text>
+      </View>)
   }
 
   return (
-    <NavigationContainer theme={DarkTheme}>
-      <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false }} name="Index" component={IndexScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignUpScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
-
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <PaperProvider>
+        <FlashMessage position="top" />
+        <InitApp />
+      </PaperProvider>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  splash: {    
-    backgroundColor: '#fff',
-  },
-});
-
-
