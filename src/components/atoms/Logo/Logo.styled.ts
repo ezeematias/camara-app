@@ -2,13 +2,15 @@ import styled from "styled-components/native";
 
 export const StyledView = styled.View`
     background-color: rgb(9,24,64);
-    height:40%;
+    height:100%;
     width:100%;
 `
 
 export const StyledContainer = styled.View`
     flex:1;
-    width:100%;
+    width:50%;
+    height:100%;
+
 `
 
 export const StyledText = styled.Text`

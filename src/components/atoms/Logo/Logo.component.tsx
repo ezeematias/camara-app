@@ -8,16 +8,11 @@ interface LogoProps{
   subtitle?:string;
 }
 
-const Logo:FC<LogoProps> = ({title,subtitle}) => {
+const Logo:FC<LogoProps> = () => {
   return (
     <StyledContainer>
-      <StyledView>
-        <StyledText>{title}</StyledText>
-        {subtitle && <StyledSubtitle>{subtitle}</StyledSubtitle>}
-      </StyledView>
-        <Image source={require('../../../../assets/shape.jpg')}/>
+        <Image source={require('../../../assets/lente.png')}/>
     </StyledContainer>
   )
 }
-
 export default Logo
