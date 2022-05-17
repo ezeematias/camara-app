@@ -103,12 +103,13 @@ const NiceListScreen = () => {
     setLoading(true);
     setData([]);
     try {
-      const querySnapshot = await getDocs(query(collection(db, "images"), where("type", "==", "messy"), orderBy('creationDate', 'desc')));
+      const querySnapshot = await getDocs(query(collection(db, "images"), where("type", "==", "messy"), orderBy('creationDate', 'asc')));
       querySnapshot.forEach(async (doc) => {
         const res: any = { ...doc.data(), id: doc.id };
         const imageUrl = await getDownloadURL(ref(storage, res.image));
         const voted = res.votes.some((vote: any) => vote === auth?.currentUser?.email);
-        setData((arr: any) => [...arr, { ...res, id: doc.id, imageUrl: imageUrl, voted }]);
+        let countLike = doc.data().votes.length;
+        setData((arr: any) => [...arr, { ...res, id: doc.id, imageUrl: imageUrl, voted, countLike }]);
       });
     } catch (error) {
       console.log(error)
@@ -117,21 +118,25 @@ const NiceListScreen = () => {
     }
   }
 
-  const handleVote = async (id: string) => {
-    setLoading(true);
+  const handleVote = async (id: string) => {    
     try {
       const ref = doc(db, "images", id);
       const document = await getDoc(ref);
       const documentVotes = document.data()?.votes;
       const userVoted = documentVotes.find((email: any) => email === auth?.currentUser?.email);
       let newVotes;
+      let countVote = document.data()?.votes.length;
       if (userVoted) {
         newVotes = documentVotes.filter((email: any) => email !== auth?.currentUser?.email);
+        countVote--;
       } else {
         newVotes = [...documentVotes, auth?.currentUser?.email];
+        countVote++;
       }
+      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, voted: !item.voted } : item ));
+      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, countLike: countVote } : item ));   
       await updateDoc(ref, { votes: newVotes })
-      await getDocuments();
+      //await getDocuments();
     } catch (error) {
       console.log(error)
     } finally {
@@ -150,7 +155,7 @@ const NiceListScreen = () => {
                 </View>}
       <ScrollView>
 
-        {data.map((item: { imageUrl: any; displayName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; votes: string | any[]; creationDate: { toDate: () => Date; }; voted: any; id: string; }) => (
+        {data.map((item: { imageUrl: any; countLike: any; displayName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; votes: string | any[]; creationDate: { toDate: () => Date; }; voted: any; id: string; }) => (
           <View style={{ backgroundColor: '#ea5051', height: 300, width: '95%', margin: 10 }}>
             <Image resizeMode='cover' style={{ flex: 1 }} source={{ uri: item.imageUrl }} />
             <View style={{ padding: 10, justifyContent: 'space-between', height: 100 }}>
@@ -164,7 +169,7 @@ const NiceListScreen = () => {
                   <AntDesign name={'hearto'} size={30} color="blue" /></TouchableOpacity>
               }
                 </View>
-              <Text style={styles.textCard}>{item.votes.length} Me gustas</Text>
+              <Text style={styles.textCard}>{item.countLike} Me gustas</Text>
                 <Text style={styles.textCard}>{format(item.creationDate.toDate(), 'DD/MM/YYYY HH:mm')}hs</Text>
               </View>
             </View>
