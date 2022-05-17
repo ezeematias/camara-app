@@ -18,6 +18,9 @@ const HomeScreen = () => {
     }
 
     const handlerCamera = () => {
+        navigation.replace('Like');
+    }    
+    const handlerCamera1 = () => {
         navigation.replace('Camera');
     }    
 
@@ -36,7 +39,7 @@ const HomeScreen = () => {
                     <Text style={styles.buttonText}>Cosas Lindas</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={handlerCamera}
+                    onPress={handlerCamera1}
                     style={[styles.buttonHome, styles.buttonOutlineRole]}
                     
                 >
