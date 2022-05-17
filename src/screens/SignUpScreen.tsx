@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, ImageBackground } from "react-native";
 import { auth } from "../database/firebase";
 import { createUserWithEmailAndPassword, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { RootStackParamList } from "../../App";
@@ -74,68 +74,71 @@ const SignScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
-            {loading && <View style={styles.spinContainer}>
-                <Spinner
-                    visible={loading}
-                    textStyle={styles.spinnerTextStyle}
-                />
-            </View>}
-            <Image
-                source={require('../assets/lente.png')}
-                resizeMode="contain"
-                style={styles.logo}
-            />
+        <ImageBackground source={require('../assets/background.jpg')} resizeMode="repeat" style={styles.image}>
+            <View style={styles.container}>
 
-            <View style={styles.inputContainer}>
-                {!!message ? <TouchableOpacity
-                    style={styles.buttonError}
-                    onPress={() => setMessage("")}
-                >
-                    <Text style={styles.buttonText}>{message}</Text>
-                </TouchableOpacity> : null}
-
-                <TextInput placeholder="Nombre"
-                    value={displayName}
-                    onChangeText={text => setDisplayName(text)}
-                    style={styles.input}
-                />
-                <TextInput placeholder="Correo electrónico"
-                    value={email}
-                    onChangeText={text => setEmail(text)}
-                    style={styles.input}
+                {loading && <View style={styles.spinContainer}>
+                    <Spinner
+                        visible={loading}
+                        textStyle={styles.spinnerTextStyle}
+                    />
+                </View>}
+                <Image
+                    source={require('../assets/lente.png')}
+                    resizeMode="contain"
+                    style={styles.logo}
                 />
 
-                <TextInput placeholder="Contraseña"
-                    value={password}
-                    onChangeText={text => setPassword(text)}
-                    style={styles.input}
-                    secureTextEntry
-                />
-                <TextInput placeholder="Vuelva a escribir la contraseña"
-                    value={rePassword}
-                    onChangeText={text => setRePassword(text)}
-                    style={styles.input}
-                    secureTextEntry
-                />
+                <View style={styles.inputContainer}>
+                    {!!message ? <TouchableOpacity
+                        style={styles.buttonError}
+                        onPress={() => setMessage("")}
+                    >
+                        <Text style={styles.buttonText}>{message}</Text>
+                    </TouchableOpacity> : null}
+
+                    <TextInput placeholder="Nombre"
+                        value={displayName}
+                        onChangeText={text => setDisplayName(text)}
+                        style={styles.input}
+                    />
+                    <TextInput placeholder="Correo electrónico"
+                        value={email}
+                        onChangeText={text => setEmail(text)}
+                        style={styles.input}
+                    />
+
+                    <TextInput placeholder="Contraseña"
+                        value={password}
+                        onChangeText={text => setPassword(text)}
+                        style={styles.input}
+                        secureTextEntry
+                    />
+                    <TextInput placeholder="Vuelva a escribir la contraseña"
+                        value={rePassword}
+                        onChangeText={text => setRePassword(text)}
+                        style={styles.input}
+                        secureTextEntry
+                    />
+                </View>
+
+                <View style={styles.buttonContainer} >
+                    <TouchableOpacity
+                        onPress={handlerSingUp}
+                        style={[styles.button]}
+                    >
+                        <Text style={styles.buttonText}>Crear</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={handlerBack}
+                        style={[styles.button, styles.buttonOutline]}
+                    >
+                        <Text style={styles.buttonOutlineText}>Volver</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-
-            <View style={styles.buttonContainer} >
-                <TouchableOpacity
-                    onPress={handlerSingUp}
-                    style={[styles.button]}
-                >
-                    <Text style={styles.buttonText}>Crear</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={handlerBack}
-                    style={[styles.button, styles.buttonOutline]}
-                >
-                    <Text style={styles.buttonOutlineText}>Volver</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        </ImageBackground>
 
     );
 }

@@ -10,10 +10,26 @@ export default StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: primaryColor,
+        backgroundColor: 'transparent',
         alignItems: 'center',
         justifyContent: 'center',
-    },    
+    },   
+    image: {
+        flex: 1,
+        justifyContent: "center"
+    },     
+    prueba: {
+        width: "100%",
+        padding: 100,
+        height:'100%',        
+
+    },  
+    buttonAccessCamera: {
+        flexDirection: 'row',
+    },  
+    buttonCamera: {        
+        marginRight: 20,
+    }, 
     containerHome: {
         flex:1,
         flexDirection: 'column',
@@ -23,9 +39,34 @@ export default StyleSheet.create({
         height: '100%',
         width: '100%',
     },
+    textUser:{
+        fontSize: 20,  
+        color: '#fff',
+        fontWeight: 'bold',  
+        marginRight: 10,             
+    },
+    textHomeCamera:{
+        backgroundColor: '#fff',
+        width: '100%',
+        padding: 10,
+        borderRadius: 30,
+        fontSize: 20,  
+        color: '#3b4552',
+        fontWeight: 'bold',                       
+    },
+    textCard:{
+        fontSize: 15,  
+        color: '#fff',   
+        marginRight: 10,             
+    },
     logo: {
         width: '100%',
         height: '30%',
+    },
+    logoLike: {
+        width: 30, 
+        height: 30,    
+        marginLeft: 10, 
     },
     logoHome: {
         width: '100%',
@@ -51,6 +92,13 @@ export default StyleSheet.create({
         alignItems: 'center',
         marginTop: '5%',
     },
+    buttonAccessContainer: {
+        flexDirection: 'row',
+        width: '25%',
+        justifyContent: 'center',
+        alignItems: 'center',  
+        marginTop: '10%', 
+    },
     buttonContainerHome: {
         width: '99%',
         justifyContent: 'center',
@@ -69,6 +117,16 @@ export default StyleSheet.create({
         backgroundColor: fourthColor,
         width: '100%',
         height: '45%',
+        padding: 5,
+        borderRadius: buttonBorderRadius,
+        alignItems: 'center',
+        justifyContent: 'center',        
+    },
+    buttonHomeCamera: {
+        backgroundColor: fourthColor,
+        width: '100%',
+        height: '30%',
+        marginTop: 10,
         padding: 5,
         borderRadius: buttonBorderRadius,
         alignItems: 'center',
@@ -98,6 +156,11 @@ export default StyleSheet.create({
     buttonOutlineRole: {
         backgroundColor: secondaryColor,
         marginTop: 5,
+        borderColor: secondaryColor,
+        borderWidth: 2,
+    },
+    buttonOutlineCamera: {
+        backgroundColor: secondaryColor,        
         borderColor: secondaryColor,
         borderWidth: 2,
     },

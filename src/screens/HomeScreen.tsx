@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
-import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { RootStackParamList } from '../../App';
+import React from 'react';
+import { Text, View, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { auth } from "../database/firebase";
 import styles from '../styles/Style';
 
@@ -17,15 +17,15 @@ const HomeScreen = () => {
             .catch((error: any) => alert(error.message))
     }
 
-    const handlerCamera = () => {
-        navigation.replace('Camera');
-    }    
+    const handlerCamera = (type: string) => {
+        type === "like" ? navigation.replace('Like') : navigation.replace('Dislike');
+    }
 
     return (
-        <View style={styles.containerHome}>
-            <View style={styles.buttonContainerHome} >
+        <ImageBackground source={require('../assets/background.jpg')} resizeMode="repeat" style={styles.image}>
+            <View style={styles.container}>
                 <TouchableOpacity
-                    onPress={handlerCamera}
+                    onPress={() => handlerCamera("like")}
                     style={styles.buttonHome}
                 >
                     <Image
@@ -36,9 +36,8 @@ const HomeScreen = () => {
                     <Text style={styles.buttonText}>Cosas Lindas</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={handlerCamera}
+                    onPress={() => handlerCamera("dislike")}
                     style={[styles.buttonHome, styles.buttonOutlineRole]}
-                    
                 >
                     <Image
                         source={require('../assets/lenteRojo.png')}
@@ -60,8 +59,9 @@ const HomeScreen = () => {
                             Cerrar Sesión</Text>
                     </View>
                 </TouchableOpacity>
+
             </View>
-        </View>
+        </ImageBackground>
     );
 }
 

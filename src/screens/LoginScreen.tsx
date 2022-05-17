@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, ImageBackground } from "react-native";
 import { auth } from "../database/firebase";
 import  styles from "../styles/Style";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -47,18 +47,18 @@ const LoginScreen = () => {
         }, 3000); 
     }
 
-    const guestLogin = () => {        
+    const guestLogin = () => {
         setEmail("invitado@gmail.com");
         setPassword("123456");
     }
-    
+
     const adminLogin = () => {
-        setEmail("admin@gmail.com");
+        setEmail("admin@monsters.com");
         setPassword("123456");
     }
-    
+
     const supplierLogin = () => {
-        setEmail("proveedores@gmail.com");
+        setEmail("usuario@monsters.com");
         setPassword("123456");
     }
 
@@ -68,24 +68,26 @@ const LoginScreen = () => {
 
     return (
         
+            <ImageBackground source={require('../assets/background.jpg')} resizeMode="repeat" style={styles.image}>
         <View style={styles.container}>
+
                 {loading && <View style={styles.spinContainer}>
                     <Spinner
                         visible={loading}
                         textStyle={styles.spinnerTextStyle}
-                    />
+                        />
                 </View>}
                 <Image
                     source={require('../assets/lente.png')}
                     resizeMode="contain"
                     style={styles.logo}
-                />
+                    />
 
                 <View style={styles.inputContainer}>
                     {!!message ? <TouchableOpacity
                         style={styles.buttonError}
                         onPress={() => setMessage("")}
-                    >
+                        >
                         <Text style={styles.buttonText}>{message}</Text>
                     </TouchableOpacity> : null}
 
@@ -93,29 +95,29 @@ const LoginScreen = () => {
                         value={email}
                         onChangeText={text => setEmail(text)}
                         style={styles.input}
-                    />
+                        />
 
                     <TextInput placeholder="Contraseña"
                         value={password}
                         onChangeText={text => setPassword(text)}
                         style={styles.input}
                         secureTextEntry
-                    />
+                        />
                 </View>
 
                 <View style={styles.buttonContainer} >
                     <TouchableOpacity
                         onPress={handlerLogin}
-
+                        
                         style={styles.button}
-                    >
+                        >
                         <Text style={styles.buttonText}>Iniciar Sesión</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={handlerBack}
                         style={[styles.button, styles.buttonOutline]}
-                    >
+                        >
                         <Text style={styles.buttonOutlineText}>Volver</Text>
                     </TouchableOpacity>
                 </View>
@@ -124,23 +126,24 @@ const LoginScreen = () => {
                     <TouchableOpacity
                         onPress={guestLogin}
                         style={[styles.buttonRole, styles.buttonOutlineRole]}
-                    >
+                        >
                         <Text style={styles.buttonOutlineTextRole}>Invitado</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={adminLogin}
                         style={[styles.buttonRole, styles.buttonOutlineRole]}
-                    >
+                        >
                         <Text style={styles.buttonOutlineTextRole}>Administrador</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={supplierLogin}
                         style={[styles.buttonRole, styles.buttonOutlineRole]}
-                    >
+                        >
                         <Text style={styles.buttonOutlineTextRole}>Proveedores</Text>
                     </TouchableOpacity>   
                 </View>                
             </View>        
+                        </ImageBackground>
     );
 }
 export default LoginScreen

@@ -1,78 +1,143 @@
 import React, { useEffect, useState } from 'react';
-import { Button, View, Image } from 'react-native';
+
+import { View, Image, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { auth, db } from "../database/firebase";
+import { db, auth } from "../database/firebase";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from "../styles/Style";
-import { doc, setDoc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
+import { Camera } from "expo-camera";
+import { useNavigation } from '@react-navigation/core';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
 
-export default function CameraScreen() {
 
-  const [loading, setLoading] = useState(false);
+const CameraScreen = () => {
   const [url, setUrl] = useState("");
-  const [urlImg, setUrlImg] = useState("");
+  const [message, setMessage] = useState("");
+
+  const [imageType, setImageType] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
 
   const storage = getStorage();
   
-  const func = async () => {
+    useEffect(() => {
+      (async () => {
+        await Camera.requestCameraPermissionsAsync();
+      })();
+    }, []);
+
+  const getBlob = async (image: any) => {
+    return await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", image, true);
+      xhr.send(null);
+    })
+  };
+
+  const uploadImage = async (image: any, type: string) => {
     setLoading(true);
-    const reference = ref(storage, "images/");
-    await getDownloadURL(reference).then(url => {
-      setUrl(url);
-    }).finally(() => { setLoading(false) });
+    const blob: any = await getBlob(image);
+    const fileName = image.substring(image.lastIndexOf("/") + 1);
+    const fileRef = ref(storage, "images/" + fileName);
+    await uploadBytes(fileRef, blob);
+    await addDoc(collection(db, "images"), {
+      user: auth?.currentUser?.email,
+      displayName: auth?.currentUser?.displayName,
+      votes: [],
+      type: type,
+      creationDate: new Date(),
+      image: fileRef.fullPath,
+    });
+    setMessageError("Imagen subida correctamente", false);
+    await blob.close();
+  };
+
+  const setMessageError = (message: string, error: boolean) => {
+    setMessage(message);
+    setTimeout(() => {
+      setMessage("");
+    }, 3000);
   }
 
-  const dateComponentPad = (value: string) => {
-    var format = value;
-    return format.length < 2 ? '0' + format : format;
-  }
-
-  const formatDate = (date: any) => {
-    let datePart = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(dateComponentPad);
-    let timePart = [date.getHours(), date.getMinutes(), date.getSeconds()].map(dateComponentPad);
-    return datePart.join('-') + ' ' + timePart.join(':');
-  }
-
-  const onPressCamera = async () => {
-    
-    let result = await ImagePicker.launchCameraAsync();
-    let docData: any = {};
-
+  const handleCamera = async (type: string) => {
+    setImageType(tp => type);
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      aspect: [4, 3],
+      quality: 1,
+    });
     if (!result.cancelled) {
       setLoading(true);
-      const storageRef = ref(storage, 'images/' + auth.currentUser?.email + " " + formatDate(new Date()) + ".jpg");
-      const img = await fetch(result.uri);
-      setUrlImg(result.uri);
-      const blob = await img.blob();
-      await uploadBytes(storageRef, blob).finally(() => { setLoading(false); func(); });
-      docData = {
-        email: auth.currentUser?.email,
-        uid: auth.currentUser?.uid,
-        name: auth.currentUser?.displayName,
-        image: result.uri,
-        url: url,
-        likes: 0,
-        date: formatDate(new Date()),
-      };
+      await uploadImage(result["uri"], type).then(() => {type === "nice" ? navigation.replace('Like') : navigation.replace('Dislike');}).finally(() => { setLoading(false) });      
+      ;
     }
+  };
 
-    await setDoc(doc(db, "gallery", auth.currentUser!.email! + " " + formatDate(new Date())), docData);
-  }
+  const handlerBack = () => {
+    navigation.replace('Home');
+}
 
   return (
+    <ImageBackground source={require('../assets/background.jpg')} resizeMode="repeat" style={styles.image}>
+          {loading && <View style={styles.spinContainer}>
+                    <Spinner
+                        visible={loading}
+                        textStyle={styles.spinnerTextStyle}
+                        />
+                </View>}
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.textHomeCamera}>
+            Seleccione la colección para la foto</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => handleCamera("nice")}
+          style={styles.buttonHomeCamera}
+        >
+          <Image
+            source={require('../assets/lente.png')}
+            resizeMode="contain"
+            style={styles.logoHome}
+          />
+          <Text style={styles.buttonText}>Cosas Lindas</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleCamera("messy")}
+          style={[styles.buttonHomeCamera, styles.buttonOutlineCamera]}
 
-    <View style={styles.container}>
-      {loading && <View style={styles.spinContainer}>
-        <Spinner
-          visible={loading}
-          textStyle={styles.spinnerTextStyle}
-        />
-      </View>}
-      <Image style={{ width: '70%', height: '70%' }}
-        source={{ uri: url }} />
-      <Button title="Camera" onPress={onPressCamera} />
-
-    </View>
+        >
+          <Image
+            source={require('../assets/lenteRojo.png')}
+            resizeMode="contain"
+            style={styles.logoHome}
+          />
+          <View>
+            <Text style={styles.buttonOutlineTextRole}>
+              Cosas Feas
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+                        onPress={handlerBack}
+                        style={[styles.button, styles.buttonOutline]}
+                        >
+                        <Text style={styles.buttonOutlineText}>Volver</Text>
+                    </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 }
+export default CameraScreen
+

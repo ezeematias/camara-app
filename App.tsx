@@ -5,6 +5,8 @@ import HomeScreen from './src/screens/HomeScreen';
 import IndexScreen from './src/screens/IndexScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import CameraScreen from './src/screens/CameraScreen';
+import LikeScreen from './src/screens/LikeScreen';
+import DislikeScreen from './src/screens/DislikeScreen'
 import AnimatedLottieView from 'lottie-react-native';
 import { StyleSheet } from 'react-native';
 import { DarkTheme, NavigationContainer } from '@react-navigation/native';
@@ -15,6 +17,8 @@ export type RootStackParamList = {
   Index: any;
   SignUp: any;
   Camera: any;
+  Like: any;
+  Dislike: any;
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -46,6 +50,8 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignUpScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
+        <Stack.Screen name="Like" component={LikeScreen} />
+        <Stack.Screen name="Dislike" component={DislikeScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>
@@ -55,12 +61,12 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#3b4552',
     alignItems: 'center',
     justifyContent: 'center',
   },
   splash: {    
-    backgroundColor: '#fff',
+    backgroundColor: '#3b4552',
   },
 });
 
