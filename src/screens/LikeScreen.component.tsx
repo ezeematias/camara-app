@@ -6,14 +6,13 @@ import { useFocusEffect } from '@react-navigation/native'
 import { getDownloadURL, ref } from 'firebase/storage'
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { ScrollView } from 'react-native-gesture-handler'
-import { Image, View } from 'react-native'
+import { Image, TouchableOpacity, View } from 'react-native'
 import Heading from '../components/atoms/Heading/Heading.component'
 import Paragraph from '../components/atoms/Paragraph/Paragraph.component';
 import { format } from 'fecha'
 import { splitUserFromEmail } from '../../utils/utils'
-import AwesomeButton from '../components/atoms/AwesomeButton/Button.component'
 import { useSelector } from 'react-redux'
-import { LinearGradient } from 'expo-linear-gradient'
+
 
 const NiceListScreen = () => {
     const [loading, setLoading] = useState(false);
@@ -67,13 +66,11 @@ const NiceListScreen = () => {
         } catch (error) {
             console.log(error)
         } finally{
-            setLoading(false);
-        }
+            setLoading(false);        }
     }
 
     return (
-        <ScrollView>
-            <LinearGradient style={{alignItems:'center', height:'100%', width:'100%'}} colors={["#a8c0ff", "#3f2b96"]}>
+        <ScrollView>            
             {loading && <Spinner />}
             {data.map((item: { imageUrl: any; user: string; votes: string | any[]; creationDate: { toDate: () => Date; }; voted: any; id: string; }) => (
                 <View style={{backgroundColor:'white',elevation:20,height:400, width:'90%', margin:10, borderBottomEndRadius:20, borderBottomStartRadius:20}}>
@@ -87,13 +84,12 @@ const NiceListScreen = () => {
                             <Paragraph textAlign='left'>{format(item.creationDate.toDate(), 'DD/MM/YYYY HH:mm')}hs</Paragraph>
                         </View>
                         {item.voted ? 
-                            <AwesomeButton backgroundDarker="#b40000" rounded height={50} onPress={()=>handleVote(item.id)} backgroundColor="#f41d1d">Eliminar voto</AwesomeButton>:
-                            <AwesomeButton rounded height={50} onPress={()=>handleVote(item.id)}>Votar</AwesomeButton>
+                            <TouchableOpacity onPress={()=>handleVote(item.id)} >Eliminar voto</TouchableOpacity>:
+                            <TouchableOpacity onPress={()=>handleVote(item.id)}>Votar</TouchableOpacity>
                         }
                     </View>
                 </View>
-            ))}
-            </LinearGradient>
+            ))}            
         </ScrollView>
     )
 }
