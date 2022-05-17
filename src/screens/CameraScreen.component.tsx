@@ -29,8 +29,7 @@ const CameraScreen = ({}) => {
     return !image ? (
         <Camera
             ref={(ref) => setCamera(ref)}
-            style={{ flex: 1, justifyContent: "flex-end" }}
-            type="back"
+            style={{ flex: 1, justifyContent: "flex-end" }}            
         >
             <StyledRow>
                 {loading && <Spinner />}
@@ -52,7 +51,6 @@ const CameraScreen = ({}) => {
         <StyledImage source={{ uri: image }}>
             <StyledRow>
                 <TouchableOpacity
-
                     onPress={handleClosePreview}
                 >
                     Tomar otra
