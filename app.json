@@ -24,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#3b4552"
-      }
+      },
+      "package": "com.essee.Camara"
     },
     "web": {
       "favicon": "./assets/favicon.png"

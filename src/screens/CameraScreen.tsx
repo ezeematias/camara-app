@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { View, Image, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { db, auth } from "../database/firebase";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from "../styles/Style";

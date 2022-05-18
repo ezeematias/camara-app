@@ -1,6 +1,6 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { useEffect } from 'react'
-import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore'
 import { db, auth, storage } from "../database/firebase";
 import { useFocusEffect } from '@react-navigation/native'
 import { getDownloadURL, ref } from 'firebase/storage'
@@ -139,7 +139,6 @@ const NiceListScreen = () => {
       setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, voted: !item.voted } : item ));
       setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, countLike: countVote } : item ));   
       await updateDoc(ref, { votes: newVotes })
-      //await getDocuments();
     } catch (error) {
       console.log(error)
     } finally {

@@ -1,6 +1,6 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { useEffect } from 'react'
-import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore'
 import { db, auth, storage } from "../database/firebase";
 import { useFocusEffect } from '@react-navigation/native'
 import { getDownloadURL, ref } from 'firebase/storage'
@@ -114,17 +114,6 @@ const NiceListScreen = () => {
           setData((arr: any) => [...arr, { ...res, id: doc.id, imageUrl: imageUrl, voted, countLike }].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)));
         }
       });
-      /*
-      const unsubscribe = onSnapshot(query(collection(db, "images"), orderBy("creationDate", "desc")), (snapshot =>
-        setData(snapshot.docs.map(doc => ({         
-              
-              imageUrl: getDownloadURL(ref(storage, doc.data().image)),
-              voted:  doc.data().votes.some((vote: any) => vote === auth?.currentUser?.email),
-              countLike: doc.data().votes.length,
-              date: doc.data().date,
-          })))
-      ))
-      return unsubscribe;*/
     } catch (error) {
       console.log(error)
     } finally {
