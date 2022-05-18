@@ -14,7 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 
-const NiceListScreen = () => {
+const DislikeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   const [loading, setLoading] = useState(false);
@@ -182,4 +182,4 @@ const NiceListScreen = () => {
   )
 }
 
-export default NiceListScreen
+export default DislikeScreen
