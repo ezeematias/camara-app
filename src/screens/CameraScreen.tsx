@@ -85,16 +85,17 @@ const CameraScreen = () => {
 
   const handleCamera = async (type: string) => {
     setImageType(tp => type);
+    setLoading(true);
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.3,
     });
     if (!result.cancelled) {
-      setLoading(true);
       await uploadImage(result["uri"], type).then(() => {type === "nice" ? navigation.replace('Like') : navigation.replace('Dislike');}).finally(() => { setLoading(false) });      
       ;
     }
+    setLoading(false)
   };
 
   const handlerBack = () => {
