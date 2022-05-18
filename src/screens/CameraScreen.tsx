@@ -46,6 +46,17 @@ const CameraScreen = () => {
     })
   };
 
+  const dateComponentPad = (value: string) => {
+    var format = value;
+    return format.length < 2 ? '0' + format : format;
+  }
+
+  const formatDate = (date: any) => {
+    let datePart = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(dateComponentPad);
+    let timePart = [date.getHours(), date.getMinutes(), date.getSeconds()].map(dateComponentPad);
+    return datePart.join('-') + ' ' + timePart.join(':');
+  }
+
   const uploadImage = async (image: any, type: string) => {
     setLoading(true);
     const blob: any = await getBlob(image);
@@ -55,6 +66,7 @@ const CameraScreen = () => {
     await addDoc(collection(db, "images"), {
       user: auth?.currentUser?.email,
       displayName: auth?.currentUser?.displayName,
+      date: formatDate(new Date()),
       votes: [],
       type: type,
       creationDate: new Date(),

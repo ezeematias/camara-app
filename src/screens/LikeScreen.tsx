@@ -1,6 +1,6 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { useEffect } from 'react'
-import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore'
 import { db, auth, storage } from "../database/firebase";
 import { useFocusEffect } from '@react-navigation/native'
 import { getDownloadURL, ref } from 'firebase/storage'
@@ -103,14 +103,28 @@ const NiceListScreen = () => {
     setLoading(true);
     setData([]);
     try {
-      const querySnapshot = await getDocs(query(collection(db, "images"), where("type", "==", "nice"), orderBy('creationDate', 'desc')));
+      const querySnapshot = await (await getDocs(query(collection(db, "images"), orderBy('date', 'desc'), orderBy('creationDate', 'desc'))));       
+      
       querySnapshot.forEach(async (doc) => {
-        const res: any = { ...doc.data(), id: doc.id };
-        const imageUrl = await getDownloadURL(ref(storage, res.image));
-        const voted = res.votes.some((vote: any) => vote === auth?.currentUser?.email);
-        let countLike = doc.data().votes.length;
-        setData((arr: any) => [...arr, { ...res, id: doc.id, imageUrl: imageUrl, voted, countLike }]);
+        if (doc.data().type === 'nice') {
+          const res: any = { ...doc.data(), id: doc.id };
+          const imageUrl = await getDownloadURL(ref(storage, res.image));
+          const voted = res.votes.some((vote: any) => vote === auth?.currentUser?.email);
+          let countLike = doc.data().votes.length;
+          setData((arr: any) => [...arr, { ...res, id: doc.id, imageUrl: imageUrl, voted, countLike }].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)));
+        }
       });
+      /*
+      const unsubscribe = onSnapshot(query(collection(db, "images"), orderBy("creationDate", "desc")), (snapshot =>
+        setData(snapshot.docs.map(doc => ({         
+              
+              imageUrl: getDownloadURL(ref(storage, doc.data().image)),
+              voted:  doc.data().votes.some((vote: any) => vote === auth?.currentUser?.email),
+              countLike: doc.data().votes.length,
+              date: doc.data().date,
+          })))
+      ))
+      return unsubscribe;*/
     } catch (error) {
       console.log(error)
     } finally {
@@ -118,7 +132,7 @@ const NiceListScreen = () => {
     }
   }
 
-  const handleVote = async (id: string) => {    
+  const handleVote = async (id: string) => {
     try {
       const ref = doc(db, "images", id);
       const document = await getDoc(ref);
@@ -133,9 +147,9 @@ const NiceListScreen = () => {
         newVotes = [...documentVotes, auth?.currentUser?.email];
         countVote++;
       }
-      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, voted: !item.voted } : item ));
-      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, countLike: countVote } : item ));      
-      await updateDoc(ref, { votes: newVotes })      
+      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, voted: !item.voted } : item));
+      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, countLike: countVote } : item));
+      await updateDoc(ref, { votes: newVotes })
       //await getDocuments();      
     } catch (error) {
       console.log(error)
@@ -148,14 +162,14 @@ const NiceListScreen = () => {
 
     <ImageBackground source={require('../assets/background.jpg')} resizeMode="repeat" style={styles.image}>
       {loading && <View style={styles.spinContainer}>
-                    <Spinner
-                        visible={loading}
-                        textStyle={styles.spinnerTextStyle}
-                        />
-                </View>}
+        <Spinner
+          visible={loading}
+          textStyle={styles.spinnerTextStyle}
+        />
+      </View>}
       <ScrollView>
 
-        {data.map((item: { imageUrl: any; countLike: any; displayName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; votes: string | any[]; creationDate: { toDate: () => Date; }; voted: any; id: string; }) => (
+        {data.map((item: { imageUrl: any; countLike: any; displayName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; creationDate: { toDate: () => Date; }; votes: string | any[]; voted: any; id: string; }) => (
           <View style={{ backgroundColor: '#232e5c', height: 300, width: '95%', margin: 10 }}>
             <Image resizeMode='cover' style={{ flex: 1 }} source={{ uri: item.imageUrl }} />
             <View style={{ padding: 10, justifyContent: 'space-between', height: 100 }}>

@@ -103,13 +103,16 @@ const NiceListScreen = () => {
     setLoading(true);
     setData([]);
     try {
-      const querySnapshot = await getDocs(query(collection(db, "images"), where("type", "==", "messy"), orderBy('creationDate', 'asc')));
+      const querySnapshot = await (await getDocs(query(collection(db, "images"), orderBy('date', 'desc'), orderBy('creationDate', 'desc'))));       
+      
       querySnapshot.forEach(async (doc) => {
-        const res: any = { ...doc.data(), id: doc.id };
-        const imageUrl = await getDownloadURL(ref(storage, res.image));
-        const voted = res.votes.some((vote: any) => vote === auth?.currentUser?.email);
-        let countLike = doc.data().votes.length;
-        setData((arr: any) => [...arr, { ...res, id: doc.id, imageUrl: imageUrl, voted, countLike }]);
+        if (doc.data().type === 'messy') {
+          const res: any = { ...doc.data(), id: doc.id };
+          const imageUrl = await getDownloadURL(ref(storage, res.image));
+          const voted = res.votes.some((vote: any) => vote === auth?.currentUser?.email);
+          let countLike = doc.data().votes.length;
+          setData((arr: any) => [...arr, { ...res, id: doc.id, imageUrl: imageUrl, voted, countLike }].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)));
+        }
       });
     } catch (error) {
       console.log(error)
