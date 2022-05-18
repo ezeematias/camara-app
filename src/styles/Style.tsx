@@ -16,7 +16,8 @@ export default StyleSheet.create({
     },   
     image: {
         flex: 1,
-        justifyContent: "center"
+        justifyContent: "center",
+        width: "100%", 
     },     
     prueba: {
         width: "100%",

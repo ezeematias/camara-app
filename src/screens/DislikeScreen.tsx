@@ -78,11 +78,11 @@ const NiceListScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.buttonCamera} onPress={handlerBack}>
-          <Image
-                    source={require('../assets/lenteRojo.png')}
-                    resizeMode="contain"
-                    style={styles.logoLike}
-                />
+            <Image
+              source={require('../assets/lenteRojo.png')}
+              resizeMode="contain"
+              style={styles.logoLike}
+            />
           </TouchableOpacity>
 
         </View>
@@ -103,8 +103,8 @@ const NiceListScreen = () => {
     setLoading(true);
     setData([]);
     try {
-      const querySnapshot = await (await getDocs(query(collection(db, "images"), orderBy('date', 'desc'), orderBy('creationDate', 'desc'))));       
-      
+      const querySnapshot = await (await getDocs(query(collection(db, "images"), orderBy('date', 'desc'), orderBy('creationDate', 'desc'))));
+
       querySnapshot.forEach(async (doc) => {
         if (doc.data().type === 'messy') {
           const res: any = { ...doc.data(), id: doc.id };
@@ -121,7 +121,7 @@ const NiceListScreen = () => {
     }
   }
 
-  const handleVote = async (id: string) => {    
+  const handleVote = async (id: string) => {
     try {
       const ref = doc(db, "images", id);
       const document = await getDoc(ref);
@@ -136,8 +136,8 @@ const NiceListScreen = () => {
         newVotes = [...documentVotes, auth?.currentUser?.email];
         countVote++;
       }
-      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, voted: !item.voted } : item ));
-      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, countLike: countVote } : item ));   
+      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, voted: !item.voted } : item));
+      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, countLike: countVote } : item));
       await updateDoc(ref, { votes: newVotes })
     } catch (error) {
       console.log(error)
@@ -148,14 +148,14 @@ const NiceListScreen = () => {
 
   return (
 
-    <ImageBackground source={require('../assets/background.jpg')} resizeMode="repeat" style={styles.image}>
-      {loading && <View style={styles.spinContainer}>
-                    <Spinner
-                        visible={loading}
-                        textStyle={styles.spinnerTextStyle}
-                        />
-                </View>}
+    <ImageBackground source={require('../assets/background.jpg')} resizeMode="cover" style={styles.image}>
       <ScrollView>
+        {loading && <View style={styles.spinContainer}>
+          <Spinner
+            visible={loading}
+            textStyle={styles.spinnerTextStyle}
+          />
+        </View>}
 
         {data.map((item: { imageUrl: any; countLike: any; displayName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; votes: string | any[]; creationDate: { toDate: () => Date; }; voted: any; id: string; }) => (
           <View style={{ backgroundColor: '#ea5051', height: 300, width: '95%', margin: 10 }}>
@@ -164,23 +164,19 @@ const NiceListScreen = () => {
               <View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={styles.textUser}>{item.displayName}</Text>
-              {item.voted ?
-                <TouchableOpacity onPress={() => handleVote(item.id)}>
-                  <AntDesign name={'heart'} size={30} color="blue" /></TouchableOpacity> :
-                <TouchableOpacity onPress={() => handleVote(item.id)}>
-                  <AntDesign name={'hearto'} size={30} color="blue" /></TouchableOpacity>
-              }
+                  {item.voted ?
+                    <TouchableOpacity onPress={() => handleVote(item.id)}>
+                      <AntDesign name={'heart'} size={30} color="blue" /></TouchableOpacity> :
+                    <TouchableOpacity onPress={() => handleVote(item.id)}>
+                      <AntDesign name={'hearto'} size={30} color="blue" /></TouchableOpacity>
+                  }
                 </View>
-              <Text style={styles.textCard}>{item.countLike} Me gustas</Text>
+                <Text style={styles.textCard}>{item.countLike} Me gustas</Text>
                 <Text style={styles.textCard}>{format(item.creationDate.toDate(), 'DD/MM/YYYY HH:mm')}hs</Text>
               </View>
             </View>
           </View>
         ))}
-
-
-
-
       </ScrollView>
     </ImageBackground>
   )

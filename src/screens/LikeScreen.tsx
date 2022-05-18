@@ -149,14 +149,14 @@ const NiceListScreen = () => {
 
   return (
 
-    <ImageBackground source={require('../assets/background.jpg')} resizeMode="repeat" style={styles.image}>
-      {loading && <View style={styles.spinContainer}>
+          <ImageBackground source={require('../assets/background.jpg')} resizeMode="cover" style={styles.image}>
+    <ScrollView>
+        {loading && <View style={styles.spinContainer}>
         <Spinner
-          visible={loading}
-          textStyle={styles.spinnerTextStyle}
+        visible={loading}
+        textStyle={styles.spinnerTextStyle}
         />
-      </View>}
-      <ScrollView>
+        </View>}
 
         {data.map((item: { imageUrl: any; countLike: any; displayName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; creationDate: { toDate: () => Date; }; votes: string | any[]; voted: any; id: string; }) => (
           <View style={{ backgroundColor: '#232e5c', height: 300, width: '95%', margin: 10 }}>

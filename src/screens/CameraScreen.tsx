@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import { View, Image, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytes } from "firebase/storage";
@@ -12,7 +11,6 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 
-
 const CameraScreen = () => {
   const [url, setUrl] = useState("");
   const [message, setMessage] = useState("");
@@ -20,7 +18,6 @@ const CameraScreen = () => {
   const [imageType, setImageType] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-
 
   const storage = getStorage();
   
