@@ -29,9 +29,9 @@ const HomeScreen = () => {
                     style={styles.buttonHome}
                 >
                     <Image
-                        source={require('../assets/lente.png')}
+                        source={require('../assets/lujo.jpg')}
                         resizeMode="contain"
-                        style={styles.logoHome}
+                        style={styles.lujoRuinas}
                     />
                     <Text style={styles.buttonText}>Cosas Lindas</Text>
                 </TouchableOpacity>
@@ -40,9 +40,9 @@ const HomeScreen = () => {
                     style={[styles.buttonHome, styles.buttonOutlineRole]}
                 >
                     <Image
-                        source={require('../assets/lenteRojo.png')}
+                        source={require('../assets/ruinas.jpg')}
                         resizeMode="contain"
-                        style={styles.logoHome}
+                        style={styles.lujoRuinas}
                     />
                     <View>
                         <Text style={styles.buttonOutlineTextRole}>

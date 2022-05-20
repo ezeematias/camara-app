@@ -16,8 +16,7 @@ export default StyleSheet.create({
     },   
     image: {
         flex: 1,
-        justifyContent: "center",
-        width: "100%", 
+        justifyContent: "center"
     },     
     prueba: {
         width: "100%",
@@ -73,6 +72,12 @@ export default StyleSheet.create({
         width: '100%',
         height: '70%',        
         margin: '3%',        
+    },
+    lujoRuinas: {
+        width: '80%',
+        height: '70%',        
+        margin: '3%',
+        borderRadius: 50,        
     },
     inputContainer: {
         width: '80%',

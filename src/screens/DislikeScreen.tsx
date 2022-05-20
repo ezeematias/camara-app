@@ -1,27 +1,110 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { useEffect } from 'react'
-import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore'
-import { db, auth, storage } from "../database/firebase";
+import { collection, addDoc, doc, getDoc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore'
+import { db, auth } from "../database/firebase";
 import { useFocusEffect } from '@react-navigation/native'
-import { getDownloadURL, ref } from 'firebase/storage'
+import { getDownloadURL, ref,getStorage,uploadBytes  } from 'firebase/storage'
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { ScrollView } from 'react-native-gesture-handler'
 import { Image, View, Text, TouchableOpacity, ImageBackground } from 'react-native'
 import { format } from 'fecha'
 import styles from "../styles/Style";
+import { Camera } from "expo-camera";
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
-const DislikeScreen = () => {
+const NiceListScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
-  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>([]);
   const [votes, setVotes] = useState<any>([]);
 
   const [fetched, setFetched] = React.useState(false);
+
+  const [url, setUrl] = useState("");
+  const [message, setMessage] = useState("");
+
+  const [imageType, setImageType] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const storage = getStorage();
+  
+    useEffect(() => {
+      (async () => {
+        await Camera.requestCameraPermissionsAsync();
+      })();
+    }, []);
+
+  const getBlob = async (image: any) => {
+    return await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", image, true);
+      xhr.send(null);
+    })
+  };
+
+  const dateComponentPad = (value: string) => {
+    var format = value;
+    return format.length < 2 ? '0' + format : format;
+  }
+
+  const formatDate = (date: any) => {
+    let datePart = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(dateComponentPad);
+    let timePart = [date.getHours(), date.getMinutes(), date.getSeconds()].map(dateComponentPad);
+    return datePart.join('-') + ' ' + timePart.join(':');
+  }
+
+  const uploadImage = async (image: any, type: string) => {
+    setLoading(true);
+    const blob: any = await getBlob(image);
+    const fileName = image.substring(image.lastIndexOf("/") + 1);
+    const fileRef = ref(storage, "images/" + fileName);
+    await uploadBytes(fileRef, blob);
+    await addDoc(collection(db, "images"), {
+      user: auth?.currentUser?.email,
+      displayName: auth?.currentUser?.displayName,
+      date: formatDate(new Date()),
+      votes: [],
+      type: type,
+      creationDate: new Date(),
+      image: fileRef.fullPath,
+    });
+    setMessageError("Imagen subida correctamente", false);
+    await blob.close();
+  };
+
+  const setMessageError = (message: string, error: boolean) => {
+    setMessage(message);
+    setTimeout(() => {
+      setMessage("");
+    }, 3000);
+  }
+
+  const handleCamera = async () => {
+    setImageType(tp => "messy");
+    setLoading(true);
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      aspect: [4, 3],
+      quality: 0.3,
+    });
+    if (!result.cancelled) {
+      await uploadImage(result["uri"], "messy").then(() => {navigation.replace('Dislike');}).finally(() => { setLoading(false) });      
+      ;
+    }
+    setLoading(false)
+  };
 
   useEffect(() => {
     const actualVotes = Object.values(votes);
@@ -47,10 +130,6 @@ const DislikeScreen = () => {
     navigation.replace('Home');
   }
 
-  function handlerCamera() {
-    navigation.replace('Camera');
-  }
-
   useFocusEffect(
     useCallback(() => {
       getDocuments();
@@ -60,7 +139,7 @@ const DislikeScreen = () => {
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.buttonAccessCamera}>
-          <TouchableOpacity style={styles.buttonCamera} onPress={handlerCamera}>
+          <TouchableOpacity style={styles.buttonCamera} onPress={handleCamera}>
             <FontAwesome name="camera" size={24} color="#fff" />
           </TouchableOpacity>
 
@@ -78,11 +157,11 @@ const DislikeScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.buttonCamera} onPress={handlerBack}>
-            <Image
-              source={require('../assets/lenteRojo.png')}
-              resizeMode="contain"
-              style={styles.logoLike}
-            />
+          <Image
+                    source={require('../assets/lenteRojo.png')}
+                    resizeMode="contain"
+                    style={styles.logoLike}
+                />
           </TouchableOpacity>
 
         </View>
@@ -103,8 +182,8 @@ const DislikeScreen = () => {
     setLoading(true);
     setData([]);
     try {
-      const querySnapshot = await (await getDocs(query(collection(db, "images"), orderBy('date', 'desc'), orderBy('creationDate', 'desc'))));
-
+      const querySnapshot = await (await getDocs(query(collection(db, "images"), orderBy('date', 'desc'), orderBy('creationDate', 'desc'))));       
+      
       querySnapshot.forEach(async (doc) => {
         if (doc.data().type === 'messy') {
           const res: any = { ...doc.data(), id: doc.id };
@@ -121,7 +200,7 @@ const DislikeScreen = () => {
     }
   }
 
-  const handleVote = async (id: string) => {
+  const handleVote = async (id: string) => {    
     try {
       const ref = doc(db, "images", id);
       const document = await getDoc(ref);
@@ -136,9 +215,10 @@ const DislikeScreen = () => {
         newVotes = [...documentVotes, auth?.currentUser?.email];
         countVote++;
       }
-      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, voted: !item.voted } : item));
-      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, countLike: countVote } : item));
+      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, voted: !item.voted } : item ));
+      setData((arr: any) => arr.map((item: any) => item.id === id ? { ...item, countLike: countVote } : item ));   
       await updateDoc(ref, { votes: newVotes })
+      //await getDocuments();
     } catch (error) {
       console.log(error)
     } finally {
@@ -148,14 +228,14 @@ const DislikeScreen = () => {
 
   return (
 
-    <ImageBackground source={require('../assets/background.jpg')} resizeMode="cover" style={styles.image}>
+    <ImageBackground source={require('../assets/background.jpg')} resizeMode="repeat" style={styles.image}>
+      {loading && <View style={styles.spinContainer}>
+                    <Spinner
+                        visible={loading}
+                        textStyle={styles.spinnerTextStyle}
+                        />
+                </View>}
       <ScrollView>
-        {loading && <View style={styles.spinContainer}>
-          <Spinner
-            visible={loading}
-            textStyle={styles.spinnerTextStyle}
-          />
-        </View>}
 
         {data.map((item: { imageUrl: any; countLike: any; displayName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; votes: string | any[]; creationDate: { toDate: () => Date; }; voted: any; id: string; }) => (
           <View style={{ backgroundColor: '#ea5051', height: 300, width: '95%', margin: 10 }}>
@@ -164,22 +244,26 @@ const DislikeScreen = () => {
               <View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={styles.textUser}>{item.displayName}</Text>
-                  {item.voted ?
-                    <TouchableOpacity onPress={() => handleVote(item.id)}>
-                      <AntDesign name={'heart'} size={30} color="blue" /></TouchableOpacity> :
-                    <TouchableOpacity onPress={() => handleVote(item.id)}>
-                      <AntDesign name={'hearto'} size={30} color="blue" /></TouchableOpacity>
-                  }
+              {item.voted ?
+                <TouchableOpacity onPress={() => handleVote(item.id)}>
+                  <AntDesign name={'heart'} size={30} color="blue" /></TouchableOpacity> :
+                <TouchableOpacity onPress={() => handleVote(item.id)}>
+                  <AntDesign name={'hearto'} size={30} color="blue" /></TouchableOpacity>
+              }
                 </View>
-                <Text style={styles.textCard}>{item.countLike} Me gustas</Text>
+              <Text style={styles.textCard}>{item.countLike} Me gustas</Text>
                 <Text style={styles.textCard}>{format(item.creationDate.toDate(), 'DD/MM/YYYY HH:mm')}hs</Text>
               </View>
             </View>
           </View>
         ))}
+
+
+
+
       </ScrollView>
     </ImageBackground>
   )
 }
 
-export default DislikeScreen
+export default NiceListScreen
